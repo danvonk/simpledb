@@ -1,4 +1,4 @@
-import Lib
+import Lib (simpleDB)
 
 main :: IO ()
-main = putStrLn "heyyyyyy"
+main = simpleDB

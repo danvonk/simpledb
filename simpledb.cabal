@@ -1,5 +1,6 @@
 cabal-version:   2.4
 name:            simpledb
+description:     Educational implementation of a database
 version:         0
 license:         BSD-3-Clause
 build-type:      Simple
@@ -13,7 +14,6 @@ extra-doc-files:
   README.md
 
 -- category:
--- description:     description
 -- synopsis:        one-line synopsis
 -- homepage:        https://github.com/FIXME/simpledb#readme
 -- source-repository head
@@ -32,9 +32,12 @@ library
   import:          common-options
   hs-source-dirs:  src
   exposed-modules: Lib
+  other-modules: Parser
+               , Sql
   build-depends:
     , containers
     , mtl
+    , parsec
 
 executable simpledb-exe
   import:         common-options
