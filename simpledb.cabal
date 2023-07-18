@@ -1,0 +1,68 @@
+cabal-version:   2.4
+name:            simpledb
+version:         0
+license:         BSD-3-Clause
+build-type:      Simple
+license-file:    LICENSE
+author:          Dan Vonk
+maintainer:      Dan Vonk <dan@danvonk.com>
+copyright:       2023 Dan Vonk
+tested-with:     GHC ==8.6.5 || ==8.8.3 || ==8.10.7 || ==9.0.2 || ==9.2.2
+extra-doc-files:
+  CHANGELOG.md
+  README.md
+
+-- category:
+-- description:     description
+-- synopsis:        one-line synopsis
+-- homepage:        https://github.com/FIXME/simpledb#readme
+-- source-repository head
+--   type:     git
+--   location: git://github.com/FIXME/simpledb.git
+
+common common-options
+  build-depends:    base >=4.9 && <5
+  default-language: Haskell2010
+  ghc-options:
+    -Wall -Wcompat -Widentities -Wincomplete-uni-patterns
+    -Wincomplete-record-updates -Wredundant-constraints
+    -fhide-source-paths -Wpartial-fields
+
+library
+  import:          common-options
+  hs-source-dirs:  src
+  exposed-modules: Lib
+  build-depends:
+    , containers
+    , mtl
+
+executable simpledb-exe
+  import:         common-options
+  hs-source-dirs: app
+  main-is:        Main.hs
+  build-depends:  simpledb
+  ghc-options:    -threaded -rtsopts -with-rtsopts=-N
+
+test-suite simpledb-test
+  import:         common-options
+  type:           exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is:        Spec.hs
+  build-depends:
+    , hspec
+    , HUnit
+    , simpledb
+    , QuickCheck
+
+  ghc-options:    -threaded -rtsopts -with-rtsopts=-N
+
+benchmark simpledb-bench
+  import:         common-options
+  type:           exitcode-stdio-1.0
+  hs-source-dirs: bench
+  main-is:        Main.hs
+  build-depends:
+    , criterion
+    , simpledb
+
+  ghc-options:    -threaded -rtsopts -with-rtsopts=-N
