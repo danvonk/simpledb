@@ -47,13 +47,13 @@ insertTable = do
 
 select :: Parser Query
 select = do
-  cols <- keyword "SELECT" *> spaces' *> (parens $ commas name)
-  tableName <- spaces' *> keyword "FROM" *> spaces' *> (parens $ commas name)
+  cols <- keyword "SELECT" *> spaces' *> parens (commas name)
+  tableName <- spaces' *> keyword "FROM" *> spaces' *> parens (commas name) <* spaces'
   whereExp <- optionMaybe wherePart
   return $ Query tableName cols whereExp
 
 wherePart :: Parser Expr
-wherePart = spaces *> keyword "WHERE" *> spaces *> expy
+wherePart = keyword "WHERE" *> spaces *> expy
 
 less :: Parser Operator
 less = Less <$ char '<'
