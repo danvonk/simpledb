@@ -32,8 +32,8 @@ library
   import:          common-options
   hs-source-dirs:  src
   exposed-modules: Lib
-  other-modules: Parser
-               , Sql
+                 , Parser
+                 , Sql
   build-depends:
     , containers
     , mtl
@@ -56,6 +56,7 @@ test-suite simpledb-test
     , HUnit
     , simpledb
     , QuickCheck
+    , parsec
 
   ghc-options:    -threaded -rtsopts -with-rtsopts=-N
 

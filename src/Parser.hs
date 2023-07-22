@@ -1,4 +1,4 @@
-module Parser (program) where
+module Parser (program, insertTable, select, createTable, line) where
 
 import Sql
 import Text.Parsec hiding (spaces)
@@ -17,7 +17,7 @@ parens :: Parser a -> Parser a
 parens = between (char '(' <* spaces) (spaces *> char ')')
 
 commas :: Parser a -> Parser [a]
-commas p = sepBy1 p (spaces *> char ',' <* spaces)
+commas p = sepBy1 p (char ',' <* spaces)
 
 name :: Parser String
 name = (:) <$> letter <*> many alphaNum
@@ -42,15 +42,15 @@ createTable = do
 insertTable :: Parser Insert
 insertTable = do
   tableName <- keyword "INSERT" *> spaces' *> keyword "INTO" *> spaces' *> name <* spaces'
-  values <- keyword "VALUES" *> spaces *> parens (commas entry)
+  values <- keyword "VALUES" *> spaces *> parens (commas entry) <* spaces
   return $ Insert tableName (Insertion . pure $ values)
 
 select :: Parser Query
 select = do
-  cols <- keyword "SELECT" *> spaces' *> parens (commas name)
-  tableName <- spaces' *> keyword "FROM" *> spaces' *> parens (commas name) <* spaces'
+  cols <- keyword "SELECT" *> space *> commas name <* spaces'
+  tableName <- keyword "FROM" *> space *> commas name <* spaces
   whereExp <- optionMaybe wherePart
-  return $ Query tableName cols whereExp
+  return $ Query cols tableName whereExp
 
 wherePart :: Parser Expr
 wherePart = keyword "WHERE" *> spaces *> expy
@@ -65,10 +65,10 @@ eq :: Parser Operator
 eq = Eq <$ char '='
 
 andd :: Parser (Expr -> Expr -> Expr)
-andd = And <$ (spaces' *> keyword "AND" <* spaces')
+andd = And <$ (keyword "AND" <* spaces')
 
 orr :: Parser (Expr -> Expr -> Expr)
-orr = Or <$ (spaces' *> keyword "OR" <* spaces')
+orr = Or <$ (keyword "OR" <* spaces')
 
 operator :: Parser Operator
 operator =
@@ -82,7 +82,7 @@ operand = Left <$> name <|> Right <$> entry
 factor :: Parser Expr
 factor =
   Brackets <$> parens expy
-    <|> Not <$> (spaces' *> keyword "NOT" <* spaces' *> expy)
+    <|> Not <$> (keyword "NOT" <* spaces' *> expy)
     <|> opExpr
 
 expy :: Parser Expr
@@ -91,8 +91,12 @@ expy = factor `chainl1` (try andd <|> try orr)
 opExpr :: Parser Expr
 opExpr = Op <$> operand <*> (spaces *> operator <* spaces) <*> operand
 
+line :: Parser (Either Create Insert)
+line = (Left <$> createTable <|> Right <$> insertTable) <* newline
+
+
 program :: Parser Program
 program = do
-  s <- many (Left <$> createTable <|> Right <$> insertTable)
+  s <- many line
   t <- select
   return $ Program s t

@@ -29,6 +29,7 @@
               hspkgs.haskell-language-server
               hspkgs.hlint
               hspkgs.ormolu
+              hspkgs.ghcid
               pkgs.bashInteractive
             ];
           };
