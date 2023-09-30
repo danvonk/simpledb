@@ -38,6 +38,8 @@ library
     , containers
     , mtl
     , parsec
+    , boxes
+    , text
 
 executable simpledb-exe
   import:         common-options

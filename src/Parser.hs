@@ -55,15 +55,6 @@ select = do
 wherePart :: Parser Expr
 wherePart = keyword "WHERE" *> spaces *> expy
 
-less :: Parser Operator
-less = Less <$ char '<'
-
-greater :: Parser Operator
-greater = Greater <$ char '<'
-
-eq :: Parser Operator
-eq = Eq <$ char '='
-
 andd :: Parser (Expr -> Expr -> Expr)
 andd = And <$ (keyword "AND" <* spaces')
 

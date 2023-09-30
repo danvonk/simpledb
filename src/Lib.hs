@@ -4,6 +4,7 @@ module Lib
 where
 
 import Parser
+import Printer
 
 import Text.Parsec (parse)
 
